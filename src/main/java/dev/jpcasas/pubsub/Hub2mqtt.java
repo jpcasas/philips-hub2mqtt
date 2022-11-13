@@ -2,18 +2,12 @@ package dev.jpcasas.pubsub;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
-
 import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
-import javax.transaction.Transactional;
-
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 
 import dev.jpcasas.clients.HubBridgeSubscriber;
 import dev.jpcasas.configuration.HubInitialConfiguration;
-import dev.jpcasas.model.Configuration;
-import dev.jpcasas.model.SettingsEnum;
 import dev.jpcasas.repositories.ConfigurationRepo;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.reactive.messaging.annotations.Broadcast;
@@ -63,8 +57,6 @@ public class Hub2mqtt {
             } catch (KeyManagementException | NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
-
         });
-
     }
 }
