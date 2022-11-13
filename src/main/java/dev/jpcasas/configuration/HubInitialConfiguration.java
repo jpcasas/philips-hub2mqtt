@@ -1,4 +1,4 @@
-package dev.jpcasas.controllers;
+package dev.jpcasas.configuration;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import javax.enterprise.event.Observes;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -20,11 +20,11 @@ import dev.jpcasas.model.SettingsEnum;
 
 import dev.jpcasas.repositories.ConfigurationRepo;
 
-import io.quarkus.runtime.StartupEvent;
 import lombok.extern.java.Log;
 
 @Log
-public class Startup {
+@ApplicationScoped
+public class HubInitialConfiguration {
     @Inject
     ConfigurationRepo crepo;
 
@@ -34,7 +34,7 @@ public class Startup {
     @ConfigProperty(name = "hue.time.to.push", defaultValue = "1000")
     long timeRetry;
 
-    public void onStart(@Observes StartupEvent ev) {
+    public void registerApplication() {
 
         Optional<Configuration> hub = crepo.findById(SettingsEnum.HUB_IP.getKey());
         List<Configuration> info = null;
@@ -92,5 +92,23 @@ public class Startup {
 
         }
         log.info("START UP APPLICATION OK");
+    }
+
+    public boolean isCongifured() {
+        Optional<Configuration> hubip = crepo.findById(SettingsEnum.HUB_IP.getKey());
+        Optional<Configuration> appId = crepo.findById(SettingsEnum.APP_ID.getKey());
+
+        return hubip.isPresent() && appId.isPresent();
+    }
+
+    public String getHubIp() {
+        Optional<Configuration> hubip = crepo.findById(SettingsEnum.HUB_IP.getKey());
+
+        return hubip.orElse(new Configuration()).getConfigValue();
+    }
+
+    public String getAppId() {
+        Optional<Configuration> appId = crepo.findById(SettingsEnum.APP_ID.getKey());
+        return appId.orElse(new Configuration()).getConfigValue();
     }
 }
